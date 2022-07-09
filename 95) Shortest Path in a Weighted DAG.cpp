@@ -38,3 +38,20 @@ void shortestPath(int src, int n, vector<pair<int,int>> adj[]){
 		(dist[i] == 1e9) ? cout << "INF" : cout << dist[i] <<" ";
 	}
 }
+
+int main(){
+	c_p_c();	
+
+	int n,m;
+	cin>>n>>m;
+
+	vector<pair<int,int>> adj[n];
+
+	for(int i=0;i<m;i++){
+		int u,v,wt;
+		cin>>u>>v>>wt;
+		adj[u].push_back({v,wt});
+	}
+
+	shortestPath(0,n,adj);
+}
