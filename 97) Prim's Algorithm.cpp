@@ -1,99 +1,46 @@
-// Brute Force : O(N^2)
-void primsAlgo(){
- 	int N, m;
- 	cin>>N>>m;
- 	vector<pair<int,int>> adj[N];
-
- 	int a,b,wt;
- 	for(int i=0;i<m;i++){
- 		cin>>a>>b>>wt;
- 		adj[a].push_back({b,wt});
- 		adj[b].push_back({a,wt});
- 	}
-
- 	int parent[N];
- 	int key[N];
- 	bool mstSet[N];
-
- 	for(int i=0;i<N;i++){
- 		key[i] = INT_MAX, mstSet[i] = false, parent[i] = -1;
- 	}
-
- 	key[0] = 0;
- 	parent[0] = -1;
-
- 	for(int count = 0; count < N-1; count++){		// Iterate for N-1 Edges as in MST there will be N-1 edges
- 		int Min = INT_MAX;
- 		int node;
-
- 		for(int v=0;v<N;v++){
- 			if(!mstSet[v] and key[v] < Min){
- 				Min = key[v], node = v;
- 			}
- 		}
-
- 		mstSet[node] = true;
-
- 		for(auto nbr : adj[node]){
- 			int v = nbr.first;
- 			int weight = it.second;
-
- 			if(mstSet[v] == false and weight < key[v]){
- 				parnet[v] = node, key[v] = weight;
- 			}
- 		}
- 	}
-
- 	for(int i=1;i<N;i++){
- 		cout<<parent[i]<<" - "<<i<<"\n";
- 	}
-}
-
-// Efficient Approach : O(NlogN)
-void primsAlgo(){
-	int N, m;
- 	cin>>N>>m;
- 	vector<pair<int,int>> adj[N];
-
- 	int a,b,wt;
- 	for(int i=0;i<m;i++){
- 		cin>>a>>b>>wt;
- 		adj[a].push_back({b,wt});
- 		adj[b].push_back({a,wt});
- 	}
-
- 	int parent[N];
- 	int key[N];
- 	bool mstSet[N];
-
- 	for(int i=0;i<N;i++){
- 		key[i] = INT_MAX, mstSet[i] = false, parent[i] = -1;
- 	}
-
- 	priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
- 	key[0] = 0;
- 	parent[0] = -1;
- 	pq.push({0,0});		// {Key, Index}
-
- 	for(int count = 0; count < N-1; count++){		// Iterate for N-1 Edges as in MST there will be N-1 edges
- 		int Min = INT_MAX;
- 		int node = pq.top().second; 
- 		pq.pop();
-
- 		mstSet[node] = true;
-
- 		for(auto nbr : adj[node]){
- 			int v = nbr.first;
- 			int weight = it.second;
-
- 			if(mstSet[v] == false and weight < key[v]){
- 				parnet[v] = node, key[v] = weight;
- 				pq.push({key[v], v});
- 			}
- 		}
- 	}
-
- 	for(int i=1;i<N;i++){
- 		cout<<parent[i]<<" - "<<i<<"\n";
- 	}
+#include<bits/stdc++.h>
+vector<pair<pair<int, int>, int>> calculatePrimsMST(int N, int m, vector<pair<pair<int, int>, int>> &g)
+{
+    vector<pair<int,int>> adj[N+1];
+    for(int i=0;i<g.size();i++){
+        int u = g[i].first.first;
+        int v = g[i].first.second;
+        int w = g[i].second;
+        
+        adj[u].push_back({v,w});
+        adj[v].push_back({u,w});
+    }
+    
+    vector<int> key(N+1, INT_MAX);
+    vector<bool> mst(N+1, false);
+    vector<int> parent(N+1,-1);
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+    pq.push({0,1});
+    
+    key[1] = 0;
+    parent[1] = -1;
+    
+    while(!pq.empty()){
+        int node = pq.top().second;
+        pq.pop();
+        mst[node] = true;
+        
+        for(auto nbr : adj[node]){
+            int v = nbr.first;
+            int weight = nbr.second;
+            
+            if(mst[v] == false and weight < key[v]){
+                parent[v] = node;
+                key[v] = weight;
+                pq.push({key[v],v});
+            }
+        }
+    }
+    
+    vector<pair<pair<int,int>,int>> ans;
+    
+    for(int i=2;i<=N;i++){
+        ans.push_back({{parent[i],i},key[i]});
+    }
+    return ans;
 }
