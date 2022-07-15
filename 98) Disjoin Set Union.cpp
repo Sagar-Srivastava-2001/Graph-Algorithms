@@ -1,53 +1,29 @@
-int parent[100000];
-int rank[100000];
+const int N = 1e5 + 10;
+int parent[N];
+int size[N];
 
-void makeSet(){
-	for(int i=1;i<=n;i++){
-		parent[i] = i;
-		rank[i] = 0;
-	}
+void make(int v){
+	parent[v] = v;
+	size[v] = 1;
 }
 
-// Path Compression
-int findPar(int node){
-	if(node == parent[node]){
-		return node;
+int find(int v){
+	if(v == parent[v]){
+		return v;
 	}
-	return parent[node] = findPar(parent[node]);			// Path Compression
+	return parent[v] = find(parent[v]);			// Path Compression
 }
 
-void Union(int u, int v){
-	u = findPar(u);
-	v = findPar(v);
+// Union by Size
+int Union(int a,int b){
+	a = find(a);
+	b = find(b);
 
-	if(rank[u] < rank[v]){
-		parent[u] = v;
-	}
-	else if(rank[v] < rank[u]){
-		parent[v] = u;
-	}
-	else{
-		parent[v] = u;
-		rank[u]++;
-	}
-}
-
-int main(){
-	c_p_c();	
-	makeSet();
-	int m;
-	cin>>m;
-
-	while(m--){
-		int u,v;
-		cin>>u>>v;
-		Union(u,v);
-	}
-
-	if(findPar(2) != findPar(3)){
-		cout<<"Different Components"<<endl;
-	}
-	else{
-		cout<<"Same Component"<<endl;
+	if(a != b){
+		if(size[a] < size[b]){
+			swap(a,b);
+		}
+		parent[b] = a;
+		size[a] += size[b];
 	}
 }
